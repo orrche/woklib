@@ -40,9 +40,11 @@ libwoklib_la_SOURCES = \
 	Messages.cc \
 	XMLReader.cc \
 	Timer.cc \
-	Timer.h 
+	Timer.h \
+	WokXMLData.cc \
+	WokXMLData.h 
 
 libwoklib_la_LDFLAGS = \
 	-g 
 
-libwoklib_la_LIBADD = -lssl
+libwoklib_la_LIBADD = -lssl -lexpat

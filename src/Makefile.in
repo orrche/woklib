@@ -110,13 +110,13 @@ includedir = $(prefix)/include/Woklib
 include_HEADERS =    Timer.h
 
 
-libwoklib_la_SOURCES =  	WokLibSignal.cc 	main.cc 	WokXMLObject.cc 	WLSignal.cc 	WokXMLTag.cc 	WLSignalContainer.cc 	WokXMLText.cc 	WLSignalData.cc 	WoklibPlugin.cc 	WLSignalHook.cc 	WLSignalInstance.cc 	WokLib.cc 	Messages.cc 	XMLReader.cc 	Timer.cc 	Timer.h 
+libwoklib_la_SOURCES =  	WokLibSignal.cc 	main.cc 	WokXMLObject.cc 	WLSignal.cc 	WokXMLTag.cc 	WLSignalContainer.cc 	WokXMLText.cc 	WLSignalData.cc 	WoklibPlugin.cc 	WLSignalHook.cc 	WLSignalInstance.cc 	WokLib.cc 	Messages.cc 	XMLReader.cc 	Timer.cc 	Timer.h 	WokXMLData.cc 	WokXMLData.h 
 
 
 libwoklib_la_LDFLAGS =  	-g 
 
 
-libwoklib_la_LIBADD = -lssl
+libwoklib_la_LIBADD = -lssl -lexpat
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -131,7 +131,7 @@ libwoklib_la_DEPENDENCIES =
 libwoklib_la_OBJECTS =  WokLibSignal.lo main.lo WokXMLObject.lo \
 WLSignal.lo WokXMLTag.lo WLSignalContainer.lo WokXMLText.lo \
 WLSignalData.lo WoklibPlugin.lo WLSignalHook.lo WLSignalInstance.lo \
-WokLib.lo Messages.lo XMLReader.lo Timer.lo
+WokLib.lo Messages.lo XMLReader.lo Timer.lo WokXMLData.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -302,108 +302,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-main.lo main.o : main.cc ../include/WokLib.h Timer.h ../include/WokLib.h \
-	../include/WokXMLTag.h ../include/WokXMLObject.h \
-	../include/WLSignal.h ../include/WLSignalData.h \
-	../include/WLSignalHook.h ../include/WLSignalInstance.h \
-	../include/WLSignalContainer.h ../include/WokXMLText.h \
-	../include/XMLReader.h ../include/WokLib.h \
-	../include/WokLibSignal.h ../include/WoklibPlugin.h \
-	../include/WokXMLTag.h ../include/WoklibPlugin.h \
-	../include/Messages.h
-Messages.lo Messages.o : Messages.cc ../include/Messages.h \
-	../include/WokLib.h Timer.h ../include/WokLib.h \
-	../include/WokXMLTag.h ../include/WokXMLObject.h \
-	../include/WLSignal.h ../include/WLSignalData.h \
-	../include/WLSignalHook.h ../include/WLSignalInstance.h \
-	../include/WLSignalContainer.h ../include/WokXMLText.h \
-	../include/XMLReader.h ../include/WokLibSignal.h \
-	../include/WoklibPlugin.h ../include/WokXMLTag.h \
-	../include/WoklibPlugin.h ../include/Messages.h
-Timer.lo Timer.o : Timer.cc Timer.h ../include/WokLib.h Timer.h \
-	../include/WLSignal.h ../include/WLSignalData.h \
-	../include/WLSignalHook.h ../include/WLSignalInstance.h \
-	../include/WLSignalContainer.h ../include/WokXMLTag.h \
-	../include/WokXMLObject.h ../include/WokXMLText.h \
-	../include/XMLReader.h ../include/WokLib.h \
-	../include/WoklibPlugin.h ../include/Messages.h \
-	../include/WokXMLTag.h ../include/WokLibSignal.h \
-	../include/WoklibPlugin.h
-WLSignal.lo WLSignal.o : WLSignal.cc ../include/WLSignal.h \
-	../include/WLSignalData.h ../include/WLSignalHook.h \
-	../include/WLSignalInstance.h ../include/WLSignalContainer.h \
-	../include/WLSignal.h ../include/WokXMLTag.h \
-	../include/WokXMLObject.h ../include/WokXMLText.h \
-	../include/XMLReader.h ../include/WokLib.h Timer.h \
-	../include/WokLib.h ../include/WokXMLTag.h \
-	../include/WokLibSignal.h ../include/WoklibPlugin.h \
-	../include/WokXMLTag.h ../include/WoklibPlugin.h \
-	../include/Messages.h
-WLSignalContainer.lo WLSignalContainer.o : WLSignalContainer.cc \
-	../include/WLSignalContainer.h ../include/WLSignalInstance.h \
-	../include/WLSignalData.h ../include/WLSignalContainer.h \
-	../include/WLSignal.h ../include/WLSignalHook.h
-WLSignalData.lo WLSignalData.o : WLSignalData.cc \
-	../include/WLSignalData.h
-WLSignalHook.lo WLSignalHook.o : WLSignalHook.cc \
-	../include/WLSignalHook.h ../include/WLSignalInstance.h \
-	../include/WLSignalData.h ../include/WLSignalContainer.h \
-	../include/WLSignal.h ../include/WLSignalHook.h
-WLSignalInstance.lo WLSignalInstance.o : WLSignalInstance.cc \
-	../include/WLSignalInstance.h ../include/WLSignalData.h \
-	../include/WLSignalContainer.h ../include/WLSignalInstance.h \
-	../include/WLSignal.h ../include/WLSignalHook.h
-WokLib.lo WokLib.o : WokLib.cc ../include/WokLib.h Timer.h \
-	../include/WokLib.h ../include/WokXMLTag.h \
-	../include/WokXMLObject.h ../include/WLSignal.h \
-	../include/WLSignalData.h ../include/WLSignalHook.h \
-	../include/WLSignalInstance.h ../include/WLSignalContainer.h \
-	../include/WokXMLText.h ../include/XMLReader.h \
-	../include/WokLib.h ../include/WokLibSignal.h \
-	../include/WoklibPlugin.h ../include/WokXMLTag.h \
-	../include/WoklibPlugin.h ../include/Messages.h \
-	../include/WokLibSignal.h ../include/WoklibPlugin.h
-WoklibPlugin.lo WoklibPlugin.o : WoklibPlugin.cc \
-	../include/WoklibPlugin.h ../include/WLSignal.h \
-	../include/WLSignalData.h ../include/WLSignalHook.h \
-	../include/WLSignalInstance.h ../include/WLSignalContainer.h \
-	../include/WLSignal.h
-WokLibSignal.lo WokLibSignal.o : WokLibSignal.cc \
-	../include/WokLibSignal.h ../include/WLSignalData.h
-WokXMLObject.lo WokXMLObject.o : WokXMLObject.cc \
-	../include/WokXMLObject.h ../include/WLSignal.h \
-	../include/WLSignalData.h ../include/WLSignalHook.h \
-	../include/WLSignalInstance.h ../include/WLSignalContainer.h
-WokXMLTag.lo WokXMLTag.o : WokXMLTag.cc ../include/WokXMLTag.h \
-	../include/WokXMLObject.h ../include/WLSignal.h \
-	../include/WLSignalData.h ../include/WLSignalHook.h \
-	../include/WLSignalInstance.h ../include/WLSignalContainer.h \
-	../include/WokXMLText.h ../include/XMLReader.h \
-	../include/WokLib.h Timer.h ../include/WokLib.h \
-	../include/WokXMLTag.h ../include/WokLibSignal.h \
-	../include/WoklibPlugin.h ../include/WokXMLTag.h \
-	../include/WoklibPlugin.h ../include/Messages.h \
-	../include/WokXMLText.h
-WokXMLText.lo WokXMLText.o : WokXMLText.cc ../include/WokXMLText.h \
-	../include/WokXMLObject.h ../include/WLSignal.h \
-	../include/WLSignalData.h ../include/WLSignalHook.h \
-	../include/WLSignalInstance.h ../include/WLSignalContainer.h \
-	../include/WokLib.h Timer.h ../include/WokLib.h \
-	../include/WokXMLTag.h ../include/WokXMLText.h \
-	../include/XMLReader.h ../include/WokLib.h \
-	../include/WokLibSignal.h ../include/WoklibPlugin.h \
-	../include/WokXMLTag.h ../include/WoklibPlugin.h \
-	../include/Messages.h
-XMLReader.lo XMLReader.o : XMLReader.cc ../include/XMLReader.h \
-	../include/WokLib.h Timer.h ../include/WokLib.h \
-	../include/WokXMLTag.h ../include/WokXMLObject.h \
-	../include/WLSignal.h ../include/WLSignalData.h \
-	../include/WLSignalHook.h ../include/WLSignalInstance.h \
-	../include/WLSignalContainer.h ../include/WokXMLText.h \
-	../include/XMLReader.h ../include/WokLibSignal.h \
-	../include/WoklibPlugin.h ../include/WokXMLTag.h \
-	../include/WoklibPlugin.h ../include/Messages.h
-
 info-am:
 info: info-am
 dvi-am:

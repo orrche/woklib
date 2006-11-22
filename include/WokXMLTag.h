@@ -54,6 +54,7 @@ class WokXMLTag : public WokXMLObject
 		WokXMLTag(WokXMLTag& tag);
 		 virtual ~WokXMLTag();
 	
+		void AddData(std::string buf);
 		void AddText(const std::string& name);
 		WokXMLTag& AddTag(const std::string& name);
 		void AddText(WokXMLText *);
@@ -63,6 +64,7 @@ class WokXMLTag : public WokXMLObject
 		void RemoveAttr(std::string name);
 		void AddObject(WokXMLObject *obj);
 
+		char * GetBodyAsBase64(char *buffer, int size);
 		const std::string& GetBody();
 		const std::string& GetName();
 		const std::string GetChildrenStr();

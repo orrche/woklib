@@ -15,10 +15,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+#include <sstream>
 
 #include "../include/WokXMLTag.h"
 #include "../include/WokXMLText.h"
 using namespace Woklib;
+const char* base64char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 WokXMLTag::WokXMLTag(WokXMLTag* parant, const std::string& name) 
 : WokXMLObject(parant),
@@ -75,6 +77,51 @@ WokXMLTag::AddObject(WokXMLObject *obj)
 			AddText(reinterpret_cast <WokXMLText *>(obj));
 			break;
 	}
+}
+
+void
+WokXMLTag::AddData(std::string buf)
+{
+	std::string ret("");
+	int n = 0;
+	
+	for ( int i = (2.99 + buf.size())/3 ; i ; i-- )
+	{
+		int data=0;
+		
+		if( buf.size() - n*3 == 1 )
+			data = buf[n*3]*256*256;
+		else if ( buf.size() - n*3 == 2 )
+			data = buf[n*3+1]*256 + buf[n*3]*256*256;
+		else
+			data = buf[n*3+2] + buf[n*3+1]*256 + buf[n*3]*256*256;
+
+		if( n * 3 > buf.size() )
+		{
+			ret += "="; 
+			ret += "=";
+		}
+		else
+		{
+			ret += base64char[(data/64/64/64)%64];
+			ret += base64char[(data/64/64)%64];
+		}
+		if( n * 3 + 2 > buf.size() )
+			ret += "=";
+		else
+		{
+			ret += base64char[(data/64)%64];
+		}
+		if( n * 3 + 3 > buf.size() )
+			ret += "=";
+		else
+		{
+			ret += base64char[data%64];
+		}
+		
+		n++;
+	}
+	AddText(ret);
 }
 
 void
@@ -177,6 +224,96 @@ std::list<WokXMLTag *>&
 WokXMLTag::GetTags()
 {
 	return tags;
+}
+
+char *
+WokXMLTag::GetBodyAsBase64(char *buffer, int size)
+{
+	std::string data = GetBody();
+	std::stringstream file;
+	int origsize = size;
+	
+	unsigned int c = 0;
+	int pos = 0;
+	unsigned int tmp;
+	bool ended = false;
+	for ( int i = 0 ; i < data.size() ; i++)
+	{	
+		if ( data[i] <= 'z' && data[i] >= 'a' )
+		{
+			tmp = data[i] - 'a' + 26;
+		}
+		else if ( data[i] <= 'Z' && data[i] >= 'A' )
+		{
+			tmp = data[i] - 'A';
+		}
+		else if ( data[i] >= '0' && data[i] <= '9' )
+		{
+			tmp = data[i] - '0' + 52;
+		}
+		else if ( data[i] == '+' )
+		{
+			tmp = 62;
+		}
+		else if ( data[i] == '/' )
+		{
+			tmp = 63;
+		}
+		else if ( data[i] == '=' )
+		{
+			ended = true;
+			tmp = 0;
+		}
+		else
+		{
+//			woklib_debug(wls, "base64: bad data");
+			continue;
+		}
+
+		switch (pos)
+		{
+			case 0:
+				tmp *= 64 * 64 * 64;
+				break;
+			case 1:
+				tmp *= 64 * 64;
+				break;
+			case 2:
+				tmp *= 64;
+				break;
+		}
+
+		c += tmp;
+		if ( pos == 3 || ended)
+		{
+			if ( ended )
+			{
+				pos--;
+			}
+			
+			int spos = 2;
+			for(;pos;pos--)
+			{
+				size--;
+				if ( !size )
+				{
+					ended = true;
+					break;
+				}
+				file << static_cast <unsigned char> ((c>>(spos--*8)) & 0xFF);
+			}
+			
+			c = 0;
+			pos = 0;
+		}
+		else
+			pos++;
+		if (ended)
+			break;
+	}
+	
+	memcpy(buffer, file.str().c_str(), origsize);
+	return buffer;
 }
 
 const std::string& 
