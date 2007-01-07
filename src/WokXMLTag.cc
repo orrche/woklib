@@ -22,14 +22,14 @@
 using namespace Woklib;
 const char* base64char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-WokXMLTag::WokXMLTag(WokXMLTag* parant, const std::string& name) 
+WokXMLTag::WokXMLTag(WokXMLTag* parant, const std::string& name)
 : WokXMLObject(parant),
 name(name)
 {
 	xr = NULL;
 }
 
-WokXMLTag::WokXMLTag(const std::string& name) 
+WokXMLTag::WokXMLTag(const std::string& name)
 : WokXMLObject(NULL),
 name(name)
 {
@@ -41,12 +41,12 @@ WokXMLTag::WokXMLTag(WokXMLTag& tag)
 {
 	name = tag.name;
 	arg_list = tag.arg_list;
-	
+
 	std::list <WokXMLObject *>::iterator iter;
-		
+
 	for( iter = tag.object_list.begin() ; iter != tag.object_list.end(); iter++)
 		AddObject(*iter);
-	
+
 	xr = NULL;
 }
 
@@ -57,8 +57,8 @@ WokXMLTag::~WokXMLTag()
 
 	for(iter = object_list.begin(); iter != object_list.end(); iter++)
 		delete *iter;
-		
-	
+
+
 	if( xr )
 		delete xr;
 }
@@ -84,11 +84,11 @@ WokXMLTag::AddData(std::string buf)
 {
 	std::string ret("");
 	int n = 0;
-	
-	for ( int i = (2.99 + buf.size())/3 ; i ; i-- )
+
+	for ( int i = static_cast<int>((2.99 + buf.size())/3) ; i ; i-- )
 	{
 		int data=0;
-		
+
 		if( buf.size() - n*3 == 1 )
 			data = buf[n*3]*256*256;
 		else if ( buf.size() - n*3 == 2 )
@@ -98,7 +98,7 @@ WokXMLTag::AddData(std::string buf)
 
 		if( n * 3 > buf.size() )
 		{
-			ret += "="; 
+			ret += "=";
 			ret += "=";
 		}
 		else
@@ -118,7 +118,7 @@ WokXMLTag::AddData(std::string buf)
 		{
 			ret += base64char[data%64];
 		}
-		
+
 		n++;
 	}
 	AddText(ret);
@@ -144,11 +144,11 @@ WokXMLTag&
 WokXMLTag::AddTag(const std::string &tagname)
 {
 	WokXMLTag *tmp = new WokXMLTag(this, tagname);
-	
+
 	object_list.push_back(tmp);
 	object_reference[tagname].push_back(tmp);
 	tags.push_back(tmp);
-	
+
 	return *tmp;
 }
 
@@ -160,7 +160,7 @@ WokXMLTag::AddTag(WokXMLTag *tag)
 	object_list.push_back(t);
 	object_reference[t->GetName()].push_back(t);
 	tags.push_back(t);
-	
+
 	return *t;
 }
 
@@ -169,31 +169,31 @@ WokXMLTag::RemoveTag(WokXMLTag *tag)
 {
 	std::list <WokXMLTag *>::iterator tagiter;
 	tagiter = find(tags.begin(), tags.end(), tag); // Search the list.
-  if (tagiter != tags.end()) 
+  if (tagiter != tags.end())
 	{
 		tags.erase(tagiter);
 	}
-	
+
 	std::list <WokXMLObject *>::iterator objiter;
 	objiter = find(object_list.begin(), object_list.end(), static_cast<WokXMLObject*>(tag)); // Search the list.
-  if (objiter != object_list.end()) 
+  if (objiter != object_list.end())
 	{
 		object_list.erase(objiter);
 	}
-	
+
 	tagiter = find(object_reference[tag->GetName()].begin(), object_reference[tag->GetName()].end(), tag); // Search the list.
-  if (tagiter != object_reference[tag->GetName()].end()) 
+  if (tagiter != object_reference[tag->GetName()].end())
 	{
 		object_reference[tag->GetName()].erase(tagiter);
 	}
-		
+
 	tag->parant = NULL;
 }
 
 void
 WokXMLTag::AddAttr(std::string name, std::string value)
 {
-	arg_list[name] = value;	
+	arg_list[name] = value;
 }
 
 void
@@ -205,7 +205,7 @@ WokXMLTag::RemoveAttr(std::string name)
 const std::string&
 WokXMLTag::GetName()
 {
-	return name;	
+	return name;
 }
 
 std::list <WokXMLObject *> &
@@ -214,7 +214,7 @@ WokXMLTag::GetItemList()
 	return object_list;
 }
 
-std::list<WokXMLTag *>& 
+std::list<WokXMLTag *>&
 WokXMLTag::GetTagList(const std::string& name)
 {
 	return object_reference[name];
@@ -232,13 +232,13 @@ WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 	std::string data = GetBody();
 	std::stringstream file;
 	int origsize = size;
-	
+
 	unsigned int c = 0;
 	int pos = 0;
 	unsigned int tmp;
 	bool ended = false;
 	for ( int i = 0 ; i < data.size() ; i++)
-	{	
+	{
 		if ( data[i] <= 'z' && data[i] >= 'a' )
 		{
 			tmp = data[i] - 'a' + 26;
@@ -290,7 +290,7 @@ WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 			{
 				pos--;
 			}
-			
+
 			int spos = 2;
 			for(;pos;pos--)
 			{
@@ -302,7 +302,7 @@ WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 				}
 				file << static_cast <unsigned char> ((c>>(spos--*8)) & 0xFF);
 			}
-			
+
 			c = 0;
 			pos = 0;
 		}
@@ -311,12 +311,12 @@ WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 		if (ended)
 			break;
 	}
-	
+
 	memcpy(buffer, file.str().c_str(), origsize);
 	return buffer;
 }
 
-const std::string& 
+const std::string&
 WokXMLTag::GetBody()
 {
 	return body;
@@ -326,10 +326,10 @@ const std::string
 WokXMLTag::GetChildrenStr()
 {
 	std::string ret;
-	
+
 	std::map < std::string, std::string >::iterator arg_iter;
     std::list <WokXMLObject *>::iterator object_iter;
-	
+
 	ret = "";
 	for(object_iter = object_list.begin(); object_iter != object_list.end(); object_iter++)
 	{
@@ -342,8 +342,8 @@ void
 WokXMLTag::RemoveBody()
 {
 	std::list <WokXMLObject *>::iterator iter;
-	
-	
+
+
 	for( iter = object_list.begin(); iter != object_list.end();)
 	{
 		if( (*iter)->GetType() == 2)
@@ -351,7 +351,7 @@ WokXMLTag::RemoveBody()
 			delete *iter;
 			object_list.erase(iter);
 			iter = object_list.begin();
-			
+
 			continue;
 		}
 		iter++;
@@ -363,14 +363,14 @@ void
 WokXMLTag::RemoveChildrenTags()
 {
 	std::list <WokXMLTag *>::iterator iter;
-	
+
 	for(iter = tags.begin(); iter != tags.end(); iter++)
 	{
 		object_list.remove(*iter);
 		delete *iter;
 	}
-	
-	
+
+
 	tags.clear();
 	object_reference.clear();
 }
@@ -379,10 +379,10 @@ const std::string
 WokXMLTag::GetStr()
 {
 	std::string ret;
-	
+
 	std::map < std::string, std::string >::iterator arg_iter;
   std::list <WokXMLObject *>::iterator object_iter;
-	
+
 	ret = '<' + name;
 	for(arg_iter = arg_list.begin();arg_iter != arg_list.end();arg_iter++)
 	{
@@ -397,7 +397,7 @@ WokXMLTag::GetStr()
 	return ret;
 }
 
-const std::string& 
+const std::string&
 WokXMLTag::GetAttr(const std::string& name)
 {
 	return arg_list[name];
@@ -421,13 +421,13 @@ WokXMLTag::GetType()
 
 bool
 WokXMLTag::In(WokXMLTag &tag)
-{	
+{
 	std::list <WokXMLTag *>::iterator tag_iter;
 	std::map <std::string, std::string>::iterator arg_iter;
-	
+
 	if( name != tag.name )
 		return false;
-	
+
 	for( arg_iter = arg_list.begin() ; arg_iter != arg_list.end() ; arg_iter++)
 	{
 		if(tag.arg_list.find(arg_iter->first) != tag.arg_list.end())
@@ -438,19 +438,19 @@ WokXMLTag::In(WokXMLTag &tag)
 				return false;
 		}
 		else
-			return false;		
+			return false;
 	}
-	
-	
+
+
 	for( tag_iter = tags.begin() ; tag_iter != tags.end() ; tag_iter++)
 	{
 		std::list <WokXMLTag *>::iterator innertag_iter;
-		
+
 		if( (tag.object_reference.find((*tag_iter)->GetName())) != tag.object_reference.end() )
 		{
 			std::list <WokXMLTag *> *list;
 			list = &tag.GetTagList((*tag_iter)->GetName());
-			
+
 			for( innertag_iter = list->begin(); innertag_iter != list->end() ; innertag_iter++)
 			{
 				if( (*tag_iter)->In(**innertag_iter) )
@@ -479,7 +479,7 @@ bool WokXMLTag::operator == ( WokXMLTag &tag)
 
 	std::list <WokXMLObject *>::iterator object_iter;
 	std::list <WokXMLObject *>::iterator tag_object_iter;
-	
+
 	if ( name != tag.name )
 	{
 		return false;
@@ -492,7 +492,7 @@ bool WokXMLTag::operator == ( WokXMLTag &tag)
 	{
 		//return false;
 	}
-	
+
 	tag_object_iter = tag.object_list.begin();
 	for(object_iter = object_list.begin(); object_iter != object_list.end(); object_iter++)
 	{
@@ -511,7 +511,7 @@ bool WokXMLTag::operator == ( WokXMLTag &tag)
 					tag1 = reinterpret_cast <WokXMLTag *>(*object_iter);
 					WokXMLTag *tag2;
 					tag2 = reinterpret_cast <WokXMLTag *>(*tag_object_iter);
-				
+
 					if( !(*tag1 == *tag2) )
 						return false;
 					break;
@@ -520,7 +520,7 @@ bool WokXMLTag::operator == ( WokXMLTag &tag)
 					text1 = reinterpret_cast <WokXMLText *>(*object_iter);
 					WokXMLText *text2;
 					text2 = reinterpret_cast <WokXMLText *>(*tag_object_iter);
-				
+
 					if( !(*text1 == *text2) )
 					{
 						std::cout << "Not the same: '" << *text1 << "' != '" << *text2 << "'" << std::endl;
@@ -536,7 +536,7 @@ bool WokXMLTag::operator == ( WokXMLTag &tag)
 	}
 	if(tag_object_iter != tag.object_list.end())
 		return false;
-	
+
 	return true;
 }
 
@@ -550,10 +550,10 @@ operator>>( std::istream &input, WokXMLTag &s)
 		s.xr = new XMLReader();
 
 	input >> *s.xr;
-	
+
 	if(!s.xr->GetTag())
 		return input;
-		
+
 	s.AddTag(s.xr->GetTag());
 	/*
 	delete s.xr;

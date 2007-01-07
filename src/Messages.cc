@@ -23,7 +23,7 @@ woklib_message(WLSignal *wls, std::string message)
 {
 	WokXMLTag msgtag(NULL, "message");
 	msgtag.AddTag("body").AddText(message);
-	wls->SendSignal("Display Message", &msgtag);	
+	wls->SendSignal("Display Message", &msgtag);
 }
 
 void
@@ -31,7 +31,7 @@ woklib_error(WLSignal *wls, std::string message)
 {
 	WokXMLTag msgtag(NULL, "message");
 	msgtag.AddTag("body").AddText(message);
-	wls->SendSignal("Display Error", &msgtag);	
+	wls->SendSignal("Display Error", &msgtag);
 }
 
 void
@@ -39,6 +39,6 @@ woklib_debug(WLSignal *wls, std::string message)
 {
 	WokXMLTag msgtag(NULL, "message");
 	msgtag.AddTag("body").AddText(message);
-	wls->SendSignal("Display Debug", &msgtag);	
+	wls->SendSignal("Display Debug", &msgtag);
 }
 }
