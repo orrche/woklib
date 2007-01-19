@@ -325,15 +325,15 @@ DeXMLisize(const std::string &str)
 	{
 		if ( retstr[i] == '&' )
 		{
-			if (retstr.find("&lt;", i) != std::string::npos )
+			if (retstr.substr(i,4) == "&lt;" )
 				retstr.replace(i,4, "<");
-			else if (retstr.find("&gt;", i) != std::string::npos )
+			else if (retstr.substr(i,4) == "&gt;" )
 				retstr.replace(i,4, ">");
-			else if (retstr.find("&amp;", i) != std::string::npos )
+			else if (retstr.substr(i,5) == "&amp;" )
 				retstr.replace(i,5, "&");
-			else if (retstr.find("&quot;", i) != std::string::npos )
+			else if (retstr.substr(i,6) == "&quot;" )
 				retstr.replace(i,6, "\"");
-			else if (retstr.find("&apos;", i) != std::string::npos )
+			else if (retstr.substr(i,6) == "&apos;" )
 				retstr.replace(i,6, "\'");
 
 		}

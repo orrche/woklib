@@ -1,5 +1,5 @@
 /***************************************************************************
- *  Copyright (C) 2003-2005  Kent Gustavsson <oden@gmx.net>
+ *  Copyright (C) 2003-2007  Kent Gustavsson <nedo80@gmail.com>
  ****************************************************************************/
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "include/WLSignal.h"
 #include "include/WokXMLTag.h"
+#include <sstream>
 #include <iostream>
 
 using std::cerr;
@@ -86,23 +87,22 @@ WLSignal::SendSignal (const std::string &signal, WLSignalData * wlsd)
 				SendSignal("Display Error", oldtag);
 			}
 			
+			std::stringstream l_sstr;
+			l_sstr << level;
+			sigtag.AddAttr("level", l_sstr.str());
 			SendSignal("Display Signal", sigtag);
 		}
 		return 0;
 	}
 	
-	int run;
-	if( (run = hooks[signal].Execute(wlsd)) < 0 )
-	{	
-		hooks.erase(signal);
-		run = -run;
-	}
-		
 #ifdef DEBUG
 	if(signal != "Display Signal" && signal != "Display Debug")
 	{
 		WokXMLTag sigtag(NULL, "signal");
 		sigtag.AddAttr("name", signal);
+		std::stringstream l_sstr;
+		l_sstr << level;
+		sigtag.AddAttr("level", l_sstr.str());
 		
 		if( dynamic_cast<WokXMLTag *> ( wlsd ) )
 			sigtag.AddTag(static_cast<WokXMLTag *> (wlsd));
@@ -117,5 +117,15 @@ WLSignal::SendSignal (const std::string &signal, WLSignalData * wlsd)
 	}
 #endif // DEBUG
 
+	
+	level++;
+	int run;
+	if( (run = hooks[signal].Execute(wlsd)) < 0 )
+	{	
+		hooks.erase(signal);
+		run = -run;
+	}
+		
+	level--;
 	return run;
 }
