@@ -226,6 +226,25 @@ WokXMLTag::GetTags()
 	return tags;
 }
 
+void
+WokXMLTag::Add(std::string data)
+{
+	if(!xr)
+		xr = new XMLReader();
+
+	xr->Add(data);
+
+	if(!xr->GetTag())
+		return;
+
+	AddTag(xr->GetTag());
+
+	delete xr;
+	xr = NULL;
+
+	return;
+}
+
 char *
 WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 {

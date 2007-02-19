@@ -40,6 +40,7 @@ class XMLReader
 		~XMLReader();
 		
 		WokXMLTag* GetTag();
+		void Add(std::string data);
 		
 		static void vxt_start(void *data, const XML_Char *el, const XML_Char **attr);
 		static void vxt_contence(void *data, const XML_Char *string, int len);

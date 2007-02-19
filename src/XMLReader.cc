@@ -1,5 +1,5 @@
 /***************************************************************************
- *  Copyright (C) 2003-2005  Kent Gustavsson <nedo80@gmail.com>
+ *  Copyright (C) 2003-2007  Kent Gustavsson <nedo80@gmail.com>
  ****************************************************************************/
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,12 +55,27 @@ XMLReader::GetTag()
 	return current_xml_tag;
 }
 
+void
+XMLReader::Add(std::string data)
+{
+	if (!XML_Parse (p, data.c_str(), data.size(), 0))
+	{
+		std::string msg;
+		msg = "Parse error at line " ;
+		msg += XML_GetCurrentLineNumber (p);
+		msg += ":\n";
+		msg +=  XML_ErrorString (XML_GetErrorCode (p));
+		msg += '\n';
+		std::cout << "Error: " << msg << std::endl;
+	}
+}
+
 namespace Woklib
 {
 std::istream &
 operator>>( std::istream &input, XMLReader &c)
 {
-	char buffer[20];
+	char buffer[200];
 	int len = 0;
 	
 	while(!c.finished && input)
@@ -69,22 +84,8 @@ operator>>( std::istream &input, XMLReader &c)
 			len = 20;
 		else
 			len = input.gcount();
-
-		if (!XML_Parse (c.p, buffer, len, 0))
-		{
-		/*
-			std::string msg;
-			msg = "Parse error at line " ;
-			msg += XML_GetCurrentLineNumber (c.p);
-			msg += ":\n";
-			msg +=  XML_ErrorString (XML_GetErrorCode (c.p));
-			msg += '\n';
-			
-			WokXMLTag sigtag(NULL, "message");
-			sigtag.AddTag("body").AddText(std::string("Error Reading XML: ") + msg);
-			c.wls->SendSignal("Display Error", sigtag);
-		*/
-		}
+		
+		c.Add(std::string(buffer,len));
 	}
 	return input;
 }
