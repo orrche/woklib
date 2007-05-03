@@ -45,7 +45,7 @@ class XMLReader
 		static void vxt_start(void *data, const XML_Char *el, const XML_Char **attr);
 		static void vxt_contence(void *data, const XML_Char *string, int len);
 		static void vxt_end(void *data, const XML_Char *el);
-	
+		static int enchandler(void *c, const XML_Char *name, XML_Encoding *info);
 	protected:
 		XML_Parser p;
 		WokXMLTag *current_xml_tag;

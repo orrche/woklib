@@ -25,7 +25,8 @@ XMLReader::XMLReader()
 	current_xml_tag = NULL;
 	
 	p = XML_ParserCreate (NULL);
-
+	
+	XML_SetUnknownEncodingHandler(p, XMLReader::enchandler, this);
 	XML_SetUserData (p, this);
 	XML_SetElementHandler (p, XMLReader::vxt_start, XMLReader::vxt_end);
 	XML_SetCharacterDataHandler (p, XMLReader::vxt_contence);
@@ -89,6 +90,22 @@ operator>>( std::istream &input, XMLReader &c)
 	}
 	return input;
 }
+}
+
+/// This sucks but works sometimes
+int
+XMLReader::enchandler(void *c, const XML_Char *name, XML_Encoding *info)
+{
+	for ( int i = 0 ; i < 256 ; i++ )
+	{
+		info->map[i] = i;
+	}
+
+	info->convert = NULL;
+	info->data = c;
+	info->release = NULL;
+	
+	return 1;
 }
 
 void
