@@ -498,6 +498,10 @@ WokXMLTag::operator =(WokXMLTag &tag)
 	for(iter = object_list.begin(); iter != object_list.end(); iter++)
 		delete *iter;
 
+	object_list.clear();
+	tags.clear();
+	arg_list.clear();
+	object_reference.clear();
 
 	if( xr )
 		delete xr;
