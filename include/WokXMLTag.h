@@ -82,8 +82,8 @@ class WokXMLTag : public WokXMLObject
 		int GetType();
 		void Print(std::ostream &output);
 
-		bool operator == ( WokXMLTag &event);
-
+		bool operator == ( WokXMLTag &tag);
+		WokXMLTag & operator = ( WokXMLTag &tag);
 	protected:
 		XMLReader *xr;
 		

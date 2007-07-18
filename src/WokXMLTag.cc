@@ -490,6 +490,28 @@ WokXMLTag::Print(std::ostream &output)
 	output << *this;
 }
 
+WokXMLTag &
+WokXMLTag::operator =(WokXMLTag &tag)
+{
+	std::list <WokXMLObject *>::iterator iter;
+
+	for(iter = object_list.begin(); iter != object_list.end(); iter++)
+		delete *iter;
+
+
+	if( xr )
+		delete xr;
+
+	name = tag.name;
+	arg_list = tag.arg_list;
+
+	for( iter = tag.object_list.begin() ; iter != tag.object_list.end(); iter++)
+		AddObject(*iter);
+
+	xr = NULL;
+
+}
+
 bool WokXMLTag::operator == ( WokXMLTag &tag)
 {
 	if ( GetStr() == tag.GetStr() )
