@@ -20,6 +20,7 @@ INCLUDES = -I.. -I../include/
 lib_LTLIBRARIES = libwoklib.la
 
 includedir = $(prefix)/include/Woklib
+libdir = $(prefix)/lib
 
 include_HEADERS = \
   Timer.h
@@ -45,6 +46,6 @@ libwoklib_la_SOURCES = \
 	WokXMLData.h 
 
 libwoklib_la_LDFLAGS = \
-	-g 
+	-g -lssl -lexpat `pkg-config gtk+-2.0 --libs`
 
-libwoklib_la_LIBADD = -lssl -lexpat
+libwoklib_la_LIBADD = 

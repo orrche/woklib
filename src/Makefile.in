@@ -43,7 +43,6 @@ datadir = @datadir@
 sysconfdir = @sysconfdir@
 sharedstatedir = @sharedstatedir@
 localstatedir = @localstatedir@
-libdir = @libdir@
 infodir = @infodir@
 mandir = @mandir@
 oldincludedir = /usr/include
@@ -106,6 +105,7 @@ INCLUDES = -I.. -I../include/
 lib_LTLIBRARIES = libwoklib.la
 
 includedir = $(prefix)/include/Woklib
+libdir = $(prefix)/lib
 
 include_HEADERS =    Timer.h
 
@@ -113,10 +113,10 @@ include_HEADERS =    Timer.h
 libwoklib_la_SOURCES =  	WokLibSignal.cc 	main.cc 	WokXMLObject.cc 	WLSignal.cc 	WokXMLTag.cc 	WLSignalContainer.cc 	WokXMLText.cc 	WLSignalData.cc 	WoklibPlugin.cc 	WLSignalHook.cc 	WLSignalInstance.cc 	WokLib.cc 	Messages.cc 	XMLReader.cc 	Timer.cc 	Timer.h 	WokXMLData.cc 	WokXMLData.h 
 
 
-libwoklib_la_LDFLAGS =  	-g 
+libwoklib_la_LDFLAGS =  	-g -lssl -lexpat `pkg-config gtk+-2.0 --libs`
 
 
-libwoklib_la_LIBADD = -lssl -lexpat
+libwoklib_la_LIBADD = 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -276,7 +276,7 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	  awk '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
 
 mostlyclean-tags:
 

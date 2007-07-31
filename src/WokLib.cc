@@ -106,10 +106,11 @@ WokLib::LoadPlugIn (std::string filename)
 	plugins[filename] = plugin;
 
 #else
-	void *PlugInLib = dlopen (filename.c_str (), RTLD_LOCAL);
+	void *PlugInLib = dlopen (filename.c_str (), RTLD_LOCAL|RTLD_LAZY);
 	if (!PlugInLib)
 	{
-		woklib_error(wls, "Cannot load library: " + std::string(dlerror()));
+//		woklib_error(wls, "Cannot load library: " + std::string(dlerror()));
+		std::cerr << "Cannot load library: " << dlerror() << std::endl;
 		return 0;
 	}
 
