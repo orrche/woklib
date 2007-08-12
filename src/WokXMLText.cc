@@ -42,7 +42,7 @@ WokXMLText::~WokXMLText()
 const std::string
 WokXMLText::GetStr()
 {
-	return text;
+	return XMLisize(text);
 }
 
 int
