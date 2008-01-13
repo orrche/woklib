@@ -238,10 +238,7 @@ WokXMLTag::ChangeXMLNSFor(WokXMLTag *child, std::string name)
 	std::string old = child->GetAttr("xmlns");
 	std::list <WokXMLTag *>::iterator tagiter;
 	
-	std::cout << "So we crash here... this is a really odd place for a crash tho I think " << std::endl;
-	std::cout << old << " <- " << name << std::endl;
 	tagiter = find(namespace_list[old].begin(), namespace_list[old].end(), child);
-	std::cout << "Its soo clean that there shouldn't be any errors here.." << std::endl;
 	
 	if ( tagiter != namespace_list[child->GetAttr("xmlns")].end() )
 		namespace_list[child->GetAttr("xmlns")].erase(tagiter);
