@@ -49,6 +49,8 @@ class WokXMLTag : public WokXMLObject
 	
 	public:
 		WokXMLTag(WokXMLTag* parant, const std::string& name);
+		WokXMLTag(WokXMLTag* parant, const std::string& name, const std::string& ns);
+		WokXMLTag(const std::string& name, const std::string& ns);
 		WokXMLTag(const std::string& name);
 
 		WokXMLTag(WokXMLTag& tag);
@@ -58,6 +60,7 @@ class WokXMLTag : public WokXMLObject
 		void AddData(std::string buf);
 		void AddText(const std::string& name);
 		WokXMLTag& AddTag(const std::string& name);
+		WokXMLTag& AddTag(const std::string &tagname, const std::string &ns);
 		void AddText(WokXMLText *);
 		WokXMLTag& AddTag(WokXMLTag *);
 		void RemoveTag(WokXMLTag *);
@@ -71,22 +74,27 @@ class WokXMLTag : public WokXMLObject
 		const std::string GetChildrenStr();
 		const std::string GetStr();
 		WokXMLTag &GetFirstTag(const std::string& name);
+		WokXMLTag &GetFirstTag(const std::string& name, const std::string& ns);
 		std::list <WokXMLTag *>& GetTags();
 		std::list <WokXMLObject *>& GetItemList();
 		std::list <WokXMLTag *>& GetTagList(const std::string& name);
 		const std::string& GetAttr(const std::string& name);
-	
+		const std::string& GetNS();
+
 		bool In(WokXMLTag &tag);
 		void RemoveChildrenTags();
 		void RemoveBody();
 		int GetType();
 		void Print(std::ostream &output);
 
+		void ChangeXMLNSFor(WokXMLTag *child, std::string name);
 		bool operator == ( WokXMLTag &tag);
 		WokXMLTag & operator = ( WokXMLTag &tag);
 	protected:
 		XMLReader *xr;
 		
+		std::string empty_str;
+	
 		std::string body;
 		std::string name;
 		std::string text;
@@ -94,6 +102,9 @@ class WokXMLTag : public WokXMLObject
 		std::list <WokXMLObject *> object_list;
 		std::map <std::string, std::string> arg_list;
 		std::map <std::string, std::list<WokXMLTag *> > object_reference;
+	
+		std::map <std::string, std::list<WokXMLTag *> > namespace_list;
+		std::map <std::string, std::map<std::string, std::list<WokXMLTag *> > > namespace_reference;
 };
 
 }

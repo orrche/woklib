@@ -29,6 +29,22 @@ name(name)
 	xr = NULL;
 }
 
+WokXMLTag::WokXMLTag(WokXMLTag* parant, const std::string& name, const std::string& ns)
+: WokXMLObject(parant),
+name(name)
+{
+	arg_list["xmlns"] = ns;
+	xr = NULL;
+}
+
+WokXMLTag::WokXMLTag(const std::string& name, const std::string& ns)
+: WokXMLObject(NULL),
+name(name)
+{
+	arg_list["xmlns"] = ns;
+	xr = NULL;
+}
+
 WokXMLTag::WokXMLTag(const std::string& name)
 : WokXMLObject(NULL),
 name(name)
@@ -141,12 +157,28 @@ WokXMLTag::AddText(WokXMLText *t)
 }
 
 WokXMLTag&
+WokXMLTag::AddTag(const std::string &tagname, const std::string &ns)
+{
+	WokXMLTag *tmp = new WokXMLTag(this, tagname, ns);
+	
+	object_list.push_back(tmp);
+	object_reference[tagname].push_back(tmp);
+	namespace_list[ns].push_back(tmp);
+	namespace_reference[tagname][ns].push_back(tmp);
+	tags.push_back(tmp);
+
+	return *tmp;
+}
+
+WokXMLTag&
 WokXMLTag::AddTag(const std::string &tagname)
 {
 	WokXMLTag *tmp = new WokXMLTag(this, tagname);
 
 	object_list.push_back(tmp);
 	object_reference[tagname].push_back(tmp);
+	namespace_list[""].push_back(tmp);
+	namespace_reference[tagname][""].push_back(tmp);
 	tags.push_back(tmp);
 
 	return *tmp;
@@ -159,6 +191,8 @@ WokXMLTag::AddTag(WokXMLTag *tag)
 	t->parant = this;
 	object_list.push_back(t);
 	object_reference[t->GetName()].push_back(t);
+	namespace_list[t->GetAttr("xmlns")].push_back(t);
+	namespace_reference[t->GetName()][t->GetAttr("xmlns")].push_back(t);
 	tags.push_back(t);
 
 	return *t;
@@ -169,36 +203,77 @@ WokXMLTag::RemoveTag(WokXMLTag *tag)
 {
 	std::list <WokXMLTag *>::iterator tagiter;
 	tagiter = find(tags.begin(), tags.end(), tag); // Search the list.
-  if (tagiter != tags.end())
+	if (tagiter != tags.end())
 	{
 		tags.erase(tagiter);
 	}
 
 	std::list <WokXMLObject *>::iterator objiter;
 	objiter = find(object_list.begin(), object_list.end(), static_cast<WokXMLObject*>(tag)); // Search the list.
-  if (objiter != object_list.end())
+	if (objiter != object_list.end())
 	{
 		object_list.erase(objiter);
 	}
 
 	tagiter = find(object_reference[tag->GetName()].begin(), object_reference[tag->GetName()].end(), tag); // Search the list.
-  if (tagiter != object_reference[tag->GetName()].end())
+	if (tagiter != object_reference[tag->GetName()].end())
 	{
 		object_reference[tag->GetName()].erase(tagiter);
 	}
+
+	tagiter = find(namespace_list[tag->GetAttr("xmlns")].begin(), namespace_list[tag->GetAttr("xmlns")].end(), tag);
+	if ( tagiter != namespace_list[tag->GetAttr("xmlns")].end() )
+		namespace_list[tag->GetAttr("xmlns")].erase(tagiter);
+	
+	tagiter = find(namespace_reference[tag->GetAttr("name")][tag->GetAttr("xmlns")].begin(), namespace_reference[tag->GetAttr("name")][tag->GetAttr("xmlns")].end(), tag);
+	if ( tagiter != namespace_reference[tag->GetAttr("name")][tag->GetAttr("xmlns")].end() )
+		namespace_reference[tag->GetAttr("name")][tag->GetAttr("xmlns")].erase(tagiter);
 
 	tag->parant = NULL;
 }
 
 void
+WokXMLTag::ChangeXMLNSFor(WokXMLTag *child, std::string name)
+{
+	std::string old = child->GetAttr("xmlns");
+	std::list <WokXMLTag *>::iterator tagiter;
+	
+	std::cout << "So we crash here... this is a really odd place for a crash tho I think " << std::endl;
+	std::cout << old << " <- " << name << std::endl;
+	tagiter = find(namespace_list[old].begin(), namespace_list[old].end(), child);
+	std::cout << "Its soo clean that there shouldn't be any errors here.." << std::endl;
+	
+	if ( tagiter != namespace_list[child->GetAttr("xmlns")].end() )
+		namespace_list[child->GetAttr("xmlns")].erase(tagiter);
+	
+	tagiter = find(namespace_reference[child->GetAttr("name")][child->GetAttr("xmlns")].begin(), namespace_reference[child->GetAttr("name")][child->GetAttr("xmlns")].end(), child);
+	if ( tagiter != namespace_reference[child->GetAttr("name")][child->GetAttr("xmlns")].end() )
+		namespace_reference[child->GetAttr("name")][child->GetAttr("xmlns")].erase(tagiter);
+
+	
+	namespace_list[name].push_back(child);
+	namespace_reference[child->GetName()][old].push_back(child);
+	
+}
+
+void
 WokXMLTag::AddAttr(std::string name, std::string value)
 {
+	if ( name == "xmlns" )
+	{
+		if ( parant )	
+			static_cast <WokXMLTag *>(parant)->ChangeXMLNSFor(this, value);		
+	}
 	arg_list[name] = value;
 }
 
 void
 WokXMLTag::RemoveAttr(std::string name)
 {
+	if( name == "xmlns" )
+	{
+		static_cast <WokXMLTag *>(parant)->ChangeXMLNSFor(this, "");		
+	}
 	arg_list.erase(name);
 }
 
@@ -392,6 +467,8 @@ WokXMLTag::RemoveChildrenTags()
 
 	tags.clear();
 	object_reference.clear();
+	namespace_list.clear();
+	namespace_reference.clear();
 }
 
 const std::string
@@ -417,9 +494,42 @@ WokXMLTag::GetStr()
 }
 
 const std::string&
+WokXMLTag::GetNS()
+{
+	if ( GetAttr("xmlns").empty() )
+	{
+		if ( parant )
+			return static_cast<WokXMLTag*>(parant)->GetNS();
+	}
+	else
+		return GetAttr("xmlns");
+	
+	return empty_str;
+}
+
+const std::string&
 WokXMLTag::GetAttr(const std::string& name)
 {
-	return arg_list[name];
+	if ( arg_list.find(name) != arg_list.end() )
+		return arg_list[name];
+	return empty_str;
+}
+
+WokXMLTag &
+WokXMLTag::GetFirstTag(const std::string& name, const std::string& ns)
+{
+	if ( namespace_reference.find(name) != namespace_reference.end() )
+	{
+		if ( namespace_reference[name].find(ns) != namespace_reference[name].end() )
+		{
+			return **namespace_reference[name][ns].begin();
+		}
+		else
+			return AddTag(name,ns);
+	}
+	else
+		return AddTag(name,ns);
+	
 }
 
 WokXMLTag &
