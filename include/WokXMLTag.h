@@ -78,6 +78,7 @@ class WokXMLTag : public WokXMLObject
 		std::list <WokXMLTag *>& GetTags();
 		std::list <WokXMLObject *>& GetItemList();
 		std::list <WokXMLTag *>& GetTagList(const std::string& name);
+		std::list<WokXMLTag *>& GetTagList(const std::string& name, const std::string& ns);
 		const std::string& GetAttr(const std::string& name);
 		const std::string& GetNS();
 

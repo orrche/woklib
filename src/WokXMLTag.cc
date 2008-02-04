@@ -293,6 +293,12 @@ WokXMLTag::GetTagList(const std::string& name)
 }
 
 std::list<WokXMLTag *>&
+WokXMLTag::GetTagList(const std::string& name, const std::string& ns)
+{
+	return namespace_reference[name][ns];
+}
+
+std::list<WokXMLTag *>&
 WokXMLTag::GetTags()
 {
 	return tags;
