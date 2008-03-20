@@ -68,7 +68,7 @@ class WokXMLTag : public WokXMLObject
 		void RemoveAttr(std::string name);
 		void AddObject(WokXMLObject *obj);
 
-		char * GetBodyAsBase64(char *buffer, int size);
+		int GetBodyAsBase64(char *buffer, int size);
 		const std::string& GetBody();
 		const std::string& GetName();
 		const std::string GetChildrenStr();

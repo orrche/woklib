@@ -323,7 +323,7 @@ WokXMLTag::Add(std::string data)
 	return;
 }
 
-char *
+int
 WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 {
 	std::string data = GetBody();
@@ -410,7 +410,7 @@ WokXMLTag::GetBodyAsBase64(char *buffer, int size)
 	}
 
 	memcpy(buffer, file.str().c_str(), origsize);
-	return buffer;
+	return file.str().size();
 }
 
 const std::string&
