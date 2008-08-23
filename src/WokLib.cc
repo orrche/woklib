@@ -204,8 +204,7 @@ WokLib::main ()
 	int sleep_time;
 	fd_set inp;
 
-	FD_ZERO (&inp);
-
+	
 	for (;;)
 	{
 		if ( !timer_instance.empty())
@@ -223,6 +222,8 @@ WokLib::main ()
 			tv.tv_sec = sleep_time;
 			tv.tv_usec = 0;
 			max_socket = 0;
+			
+			FD_ZERO (&inp);
 
 			for (iter = sockets.begin (); iter != sockets.end (); iter++)
 			{
