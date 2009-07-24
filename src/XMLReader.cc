@@ -115,7 +115,10 @@ XMLReader::vxt_start(void *data, const XML_Char *el, const XML_Char **attr)
 	c = static_cast <XMLReader *>(data);
 
 	if(c->depth == 0)
+	{
+		delete c->current_xml_tag;
 		c->current_xml_tag = new WokXMLTag(NULL, el);
+	}
 	else if (c->depth > 0)
 		c->current_xml_tag = &c->current_xml_tag->AddTag(el);
 	for (int i = 0; attr[i]; i += 2)

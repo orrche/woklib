@@ -26,10 +26,13 @@ WLSignalInstance::WLSignalInstance(WLSignal *wls)
 	
 WLSignalInstance::~WLSignalInstance()
 {
-	std::list < WLSignalContainer *>::iterator sigiter;
-	for(sigiter = signals.begin(); sigiter != signals.end(); sigiter++)
+	while(!signals.empty())
 	{
-		wls->SignalUnHook( (*sigiter)->GetSig().c_str() , this, reinterpret_cast < int (WLSignalInstance::*)(WLSignalData * wlsd) > ((*sigiter)->member), (*sigiter)->GetPriority());
+		std::string signame = (*signals.begin())->GetSig();
+		wls->SignalUnHook( signame.c_str() , this, reinterpret_cast < int (WLSignalInstance::*)(WLSignalData * wlsd) > ((*signals.begin())->member), (*signals.begin())->GetPriority());
+			// Gets deleted in WLSignalHook.cc
+		signals.pop_front();
+		
 	}
 }
 
@@ -51,6 +54,7 @@ WLSignalInstance::SignalUnHook(std::string name, int (WLSignalInstance::*member)
 	{
 		if( **sigiter == compto )
 		{
+			// Gets deleted in WLSignalHook.cc
 			signals.erase(sigiter);
 			break;
 		}
