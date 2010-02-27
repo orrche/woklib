@@ -28,6 +28,7 @@ using namespace Woklib;
 #endif
 #include <iostream>
 #include <time.h>
+#include <stdlib.h>
 
 WokLib::WokLib () :
 WLSignalInstance(&wls_main)
