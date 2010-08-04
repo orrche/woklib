@@ -46,6 +46,6 @@ libwoklib_la_SOURCES = \
 	WokXMLData.h 
 
 libwoklib_la_LDFLAGS = \
-	-g -lssl -lexpat `pkg-config gtk+-2.0 --libs`
+	-g -lexpat 
 
 libwoklib_la_LIBADD = 
