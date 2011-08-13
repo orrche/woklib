@@ -46,6 +46,6 @@ libwoklib_la_SOURCES = \
 	WokXMLData.h 
 
 libwoklib_la_LDFLAGS = \
-	-g -lexpat 
+	-g -lexpat -ldl
 
 libwoklib_la_LIBADD = 
