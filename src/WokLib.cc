@@ -30,6 +30,7 @@ using namespace Woklib;
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 WokLib::WokLib () :
 WLSignalInstance(&wls_main)
