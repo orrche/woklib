@@ -69,6 +69,7 @@ int
 WokLib::RemovePlugin( WokXMLTag *tag )
 {
 	UnLoadPlugin(tag->GetAttr("filename"));
+	return 0;
 }
 
 int
@@ -244,7 +245,7 @@ WokLib::main ()
 				continue;
 			}
 
-			if ((ret == -1))
+			if (ret == -1)
 			{
 				perror ("Not a connected socket");
 				return -1;
